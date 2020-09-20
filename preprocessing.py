@@ -3,6 +3,18 @@ import pandas as pd
 from spellchecker import SpellChecker
 import re
 
+stop_words = ('ourselves', 'hers', 'between', 'yourself', 'but', 'again', 'there', 'about', 'once', 'during',
+              'out', 'very', 'having', 'with', 'they', 'own', 'an', 'be', 'some', 'for', 'do', 'its', 'yours',
+              'such', 'into', 'of', 'most', 'itself', 'other', 'off', 'is', 's', 'am', 'or', 'who', 'as', 'from',
+              'him', 'each', 'the', 'themselves', 'until', 'below', 'are', 'we', 'these', 'your', 'his', 'through',
+              'don', 'nor', 'me', 'were', 'her', 'more', 'himself', 'this', 'down', 'should', 'our', 'their',
+              'while', 'above', 'both', 'up', 'to', 'ours', 'had', 'she', 'all', 'no', 'when', 'at', 'any', 'before',
+              'them', 'same', 'and', 'been', 'have', 'in', 'will', 'on', 'does', 'yourselves', 'then', 'that',
+              'because', 'what', 'over', 'why', 'so', 'can', 'did', 'not', 'now', 'under', 'he', 'you', 'herself',
+              'has', 'just', 'where', 'too', 'only', 'myself', 'which', 'those', 'i', 'after', 'few', 'whom', 't',
+              'being', 'if', 'theirs', 'my', 'against', 'a', 'by', 'doing', 'it', 'how', 'further', 'was', 'here', 'than')
+
+
 # Initializes the spell checker and lammatizer.
 check = SpellChecker()
 
@@ -36,6 +48,30 @@ def word_in_text(word, text):
     if match:
         return True
     return False
+
+# removing URL links (http or www pattern) and to lower case
+def rm_URL_lowcase(record: str) -> str:
+    regex = r'https?://[^\s<>"]+|www\.[^\s<>"]+'
+    sub_record = re.sub(regex, '', record).lower()
+    return sub_record
+
+# removing hashtags and @
+def rm_hashtags(record: str) -> str:
+    sub_record = re.sub(r'@|#', '', record)
+    return sub_record
+
+# removing punctuation
+def rm_punctuation(record: str) -> str:
+    s = re.sub(r'[^\w\s]', '', record)
+    return s
+
+
+# removing stopwords - i.e. the, a, an, he\
+def rm_stopwords(record: str) -> str:
+    words = list(record.split(' '))
+    filtered_sentence = ' '.join([w for w in words if not w in stop_words])
+    return filtered_sentence
+
 
 ######################### CLEANING ###########################################
 data['link'] = data['text'].apply(lambda tweet: extract_link(tweet))
