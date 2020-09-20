@@ -35,6 +35,30 @@ def correct_text(text):
 def lemmatize_text(text):
     return [lemma.lemmatize(word) for word in text]
 
+# removing URL links (http or www pattern) and to lower case
+def rm_URL_lowcase(record: str) -> str:
+    regex = r'https?://[^\s<>"]+|www\.[^\s<>"]+'
+    sub_record = re.sub(regex, '', record).lower()
+    return sub_record
+
+# removing hashtags and @
+def rm_hashtags(record: str) -> str:
+    sub_record = re.sub(r'@|#', '', record)
+    return sub_record
+
+# removing punctuation
+def rm_punctuation(record: str) -> str:
+    s = re.sub(r'[^\w\s]', '', record)
+    return s
+
+
+# removing stopwords - i.e. the, a, an, he\
+def rm_stopwords(record: str) -> str:
+    words = list(record.split(' '))
+    filtered_sentence = ' '.join([w for w in words if not w in stop_words])
+    return filtered_sentence
+
+
 ######################### CLEANING ###########################################
 
 for i in data.index:
