@@ -5,6 +5,7 @@ import pymongo
 import pandas as pd
 import numpy as np
 import re
+from BS4 import BeautifulSoup
 stop_words = ('ourselves', 'hers', 'between', 'yourself', 'but', 'again', 'there', 'about', 'once', 'during',
               'out', 'very', 'having', 'with', 'they', 'own', 'an', 'be', 'some', 'for', 'do', 'its', 'yours',
               'such', 'into', 'of', 'most', 'itself', 'other', 'off', 'is', 's', 'am', 'or', 'who', 'as', 'from',
@@ -115,6 +116,12 @@ for i in range(data.shape[0]):
     data.iloc[i, 1] = rm_punctuation(data.iloc[i, 1])
     data.iloc[i, 1] = rm_stopwords(data.iloc[i, 1])
     # print(data.iloc[i, 1])
+    
+# --- by Roel ---
+# Gets rid of html coding
+def rm_html(record: str) -> str:
+    plain = record.get_text()
+    return plain
 
 data.to_csv('outa.csv',index=True)
 
