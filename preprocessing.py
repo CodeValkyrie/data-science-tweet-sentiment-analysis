@@ -1,16 +1,28 @@
 import numpy as np
 import pandas as pd
-from spellchecker import SpellChecker
+import nltk
 import re
+from spellchecker import SpellChecker
+from nltk.tokenize import RegexpTokenizer
+from nltk.corpus import stopwords
+from nltk.stem.wordnet import WordNetLemmatizer
 
-# Initializes the spell checker and lammatizer.
+# Initializes the spell checker, tokenizer and lammatizer.
 check = SpellChecker()
+tokenizer = RegexpTokenizer(r'\w+')
+lemma = WordNetLemmatizer()
+
+# Create a set of stopwords
+# stop = set(stopwords.words('english'))
+
+# Create a set of punctuation words
+# exclude = set(string.punctuation)
 
 # Reads in the data.
 data = pd.read_json('data.json')
 
 #reading only few for testing
-data = data[:5].copy()
+# data = data[:5].copy()
 
 ########################### FUNCTIONS ###################################
 def correct_text(text):
@@ -20,36 +32,46 @@ def correct_text(text):
         text[text.index(word)] = check.correction(word)
     return text
 
-# A function that extracts the hyperlinks from the tweet's content.
-def extract_link(text):
-    regex = r'https?://[^\s<>"]+|www\.[^\s<>"]+'
-    match = re.search(regex, text)
-    if match:
-        return match.group()
-    return ''
-
-# A function that checks whether a word is included in the tweet's content
-def word_in_text(word, text):
-    word = word.lower()
-    text = text.lower()
-    match = re.search(word, text)
-    if match:
-        return True
-    return False
+def lemmatize_text(text):
+    return [lemma.lemmatize(word) for word in text]
 
 ######################### CLEANING ###########################################
-data['link'] = data['text'].apply(lambda tweet: extract_link(tweet))
 
-#tweets[tweets['link'] != ''].index
-for i in data[data['link'] != ''].index:
-    data['text'].loc[i] = re.sub(r"http\S+", "", data['text'].loc[i])
+for i in data.index:
+    print(data['text'].loc[i])
+    text = data['text'].loc[i]
 
-del data['link']
+    # Removing URL links (http pattern).
+    text = re.sub(r'https?://[^\s<>"]+|www\.[^\s<>"]+', "", text)
 
-# for row in dataframe:
-#     text_in_row = cleaned text1
-#     text_in_row = cleaned_text2
+    # !!!! Removing hashtags and @.  using BeautifulSoup (cases like:  &amp - tweet 9)? WENHAO & ROEL
+    # !!!! Replacing or removing emojis - ROEL
 
-data = data.replace("", np.nan).dropna()
+    # Lowercasing.
+    text = text.lower()
+
+    # !!!! Removing punctuation. WENHAO
+    # !!!! Removing stopwords - i.e. the, a, an, he. WENHAO
+
+    # ????some negation handling - how to keep the negation meaning????
+
+    # check cases with more than 140 characters -
+    # as this is the twitter max of characters and why we have tweets exceeding this limit ROEL
+    if len(text) > 140:
+        print("WHAT DO WE WANT TO DO WITH THIS?")
+
+    # Tokenization.
+    text = tokenizer.tokenize(text)
+
+    # Removing repeating letters (i.e. awesooome to awesome, *)
+    text = correct_text(text)
+
+    # lemmatizing the words
+    text = lemmatize_text()
+
+    data['text'].loc[i] = text
+
+# Removing all the rows that are empty in the text column after cleaning
+data = data.replace("", np.nan).replace([], np.nan).dropna()
 
 
