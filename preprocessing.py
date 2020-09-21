@@ -27,7 +27,7 @@ def correct_text(text):
     misspelled = check.unknown(text)
     for word in misspelled:
         text[text.index(word)] = check.correction(word)
-    return text
+    return list(set(text) - misspelled)
 
 def lemmatize_text(text):
     return [lemma.lemmatize(word) for word in text]
