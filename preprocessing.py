@@ -70,13 +70,15 @@ def rm_html(record: str) -> str:
 
 indices = data.index
 index_length = indices.size
+print(index_length)
 for i in indices:
 
     # Prints the progress of the preprocessing.
-    progress = round(i / index_length * 100)
-    if progress % 1000 == 0:
-        print("{}% of the data preprocessing done.".format(progress), end="\r")
-
+    #progress = round(i / index_length * 100)
+    #if progress % 1000 == 0:
+    #    print("{}% of the data preprocessing done.".format(progress), end="\r")
+    if i % 1000 == 0:
+        print(i)
     text = data['text'].loc[i]
 
     # Removing URL links (http pattern).
@@ -104,7 +106,7 @@ for i in indices:
     text = tokenizer.tokenize(text)
 
     # Removing repeating letters (i.e. awesooome to awesome, *)
-    text = correct_text(text)
+    #text = correct_text(text)
 
     # lemmatizing the words
     text = lemmatize_text(text)
@@ -116,6 +118,6 @@ for i in indices:
 # Removing all the rows that are empty in the text column after cleaning
 data = data.replace("", np.nan).replace([], np.nan).dropna()
 
-print(data)
+data.to_csv('cleaned_data.csv')
 
 
