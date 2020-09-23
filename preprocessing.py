@@ -75,7 +75,7 @@ for i in indices:
     # Prints the progress of the preprocessing.
     progress = round(i / index_length * 100)
     if progress % 1000 == 0:
-        print("{}% of the data preprocessing done.".format(progress), end="\r")
+        print("{}% of the data preprocessing done.".format(progress))
 
     text = data['text'].loc[i]
 
@@ -116,6 +116,7 @@ for i in indices:
 # Removing all the rows that are empty in the text column after cleaning
 data = data.replace("", np.nan).replace([], np.nan).dropna()
 
+data.to_csv('cleaned_text_data.csv')
 print(data)
 
 
