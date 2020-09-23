@@ -74,11 +74,18 @@ print(index_length)
 for i in indices:
 
     # Prints the progress of the preprocessing.
+<<<<<<< HEAD
+    progress = round(i / index_length * 100)
+    if progress % 1000 == 0:
+        print("{}% of the data preprocessing done.".format(progress))
+
+=======
     #progress = round(i / index_length * 100)
     #if progress % 1000 == 0:
     #    print("{}% of the data preprocessing done.".format(progress), end="\r")
     if i % 1000 == 0:
         print(i)
+>>>>>>> b716da376460cab1720cbbe81c6fc5f1744b4588
     text = data['text'].loc[i]
 
     # Removing URL links (http pattern).
