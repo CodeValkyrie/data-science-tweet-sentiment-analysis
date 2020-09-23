@@ -72,10 +72,6 @@ indices = data.index
 index_length = indices.size
 print(index_length)
 for i in indices:
-
-    #progress = round(i / index_length * 100)
-    #if progress % 1000 == 0:
-    #    print("{}% of the data preprocessing done.".format(progress), end="\r")
     if i % 1000 == 0:
         print(i)
     text = data['text'].loc[i]
