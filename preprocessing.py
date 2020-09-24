@@ -1,12 +1,13 @@
 import numpy as np
 import pandas as pd
 import re
+import demoji
 from spellchecker import SpellChecker
 from nltk.tokenize import RegexpTokenizer
 from nltk.corpus import stopwords
 from nltk.stem.wordnet import WordNetLemmatizer
-import demoji
 from bs4 import BeautifulSoup
+from city_state_dict import city_to_state_dict
 demoji.download_codes()
 
 # Initializes the spell checker, tokenizer and lammatizer.
@@ -66,6 +67,24 @@ def rm_html(record: str) -> str:
     plain = soup.get_text()
     return plain
 
+def get_state(city):
+    city = city.split(',')[0]
+    if city in city_to_state_dict.keys():
+        return city_to_state_dict[city]
+    return np.nan
+
+def check_Trump_Clinton(tokenized_text):
+    if 'hillaryclinton' in tokenized_text:
+        return "clinton"
+    elif 'realdonaldtrump' in tokenized_text:
+        return "trump"
+    elif 'hillary' in tokenized_text:
+        return 'clinton'
+    elif 'trump' in tokenized_text:
+        return "trump"
+    else:
+        return np.nan
+
 ######################### CLEANING ###########################################
 
 indices = data.index
@@ -113,6 +132,12 @@ for i in indices:
 # Removing all the rows that are empty in the text column after cleaning
 data = data.replace("", np.nan).replace([], np.nan).dropna()
 
-data.to_csv('cleaned_data_params.csv')
+########################################### ADDING COLUMNS TO DATA ###########################################
+data['states'] = data['place_full_name'].apply(lambda row: get_state(row))
+data['candidate'] = data['text'].apply(lambda row: check_Trump_Clinton(row))
+data = data.dropna()
+print("Remaining data points: ", len(data.index))
+
+data.to_csv("clean_twitter_data.csv")
 
 

@@ -1,6 +1,5 @@
 import pandas as pd
 import numpy as np
-from city_state_dict import city_to_state_dict
 
 ################################################ FUNCTIONS ###################################################
 def get_n_tweets(data):
@@ -8,23 +7,6 @@ def get_n_tweets(data):
 
 def get_n_per_col_value(data, column):
     return data[column].value_counts()
-
-def get_state(city):
-    if city in city_to_state_dict.keys():
-        return city_to_state_dict[city]
-    return np.nan
-
-def check_Trump_Clinton(tokenized_text):
-    if 'hillaryclinton' in tokenized_text:
-        return "clinton"
-    elif 'realdonaldtrump' in tokenized_text:
-        return "trump"
-    elif 'hillary' in tokenized_text:
-        return 'clinton'
-    elif 'trump' in tokenized_text:
-        return "trump"
-    else:
-        return np.nan
 
 ###################################### DESCRIPTIVE STATISTICS ON RAW #########################################
 # raw_data = pd.read_csv("tweets_out.csv")
@@ -45,12 +27,8 @@ def check_Trump_Clinton(tokenized_text):
 # print("The total number of data points in the data frame is: ", n_tweets)
 # n_tweet_states = get_n_per_col_value(data, 'states').sum()
 # n_unknown = n_tweets - n_tweet_states
-# print("Fron this {} tweet states are known and {} tweets are from unknown states.".format(n_tweet_states, n_unknown))
+# print("From this {} tweet states are known and {} tweets are from unknown states.".format(n_tweet_states, n_unknown))
 
-########################################### ADDING COLUMNS TO DATA ###########################################
-data = pd.read_csv("cleaned_data_params.csv", index_col='index')
+data = pd.read_csv("clean_twitter_data.csv", index_col=0)
 print(len(data.index))
-data['states'] = data['place_full_name'].apply(lambda row: get_state(row))
-data['candidate'] = data['text'].apply(lambda row: check_Trump_Clinton(row))
-
-data.to_csv("cleaned_data_with_states_and_candidates.csv")
+print(data[data['states'] == np.nan])
