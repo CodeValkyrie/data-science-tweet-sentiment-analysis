@@ -28,7 +28,3 @@ def get_n_per_col_value(data, column):
 # n_tweet_states = get_n_per_col_value(data, 'states').sum()
 # n_unknown = n_tweets - n_tweet_states
 # print("From this {} tweet states are known and {} tweets are from unknown states.".format(n_tweet_states, n_unknown))
-
-data = pd.read_csv("clean_twitter_data.csv", index_col=0)
-print(len(data.index))
-print(data[data['states'] == np.nan])
