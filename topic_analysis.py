@@ -16,10 +16,10 @@ pd.set_option('display.max_rows', None)
 from collections import Counter
 
 ############## Cleaned data switch here ################
-data = pd.read_csv('cleaned_data.csv')
+data = pd.read_csv('cleaned_twitter_data_50000_sample.csv')
 print(data.shape)
 # print(data.iloc[0:10,:])
-data = data.iloc[:,1]
+data = data.iloc[:,4]
 
 text = []
 b = 0
@@ -46,36 +46,42 @@ dictionary.save('dictionary.gensim')
 
 ##########################################
 
-# NUM_TOPICS = 20
-# ldamodel = gensim.models.ldamodel.LdaModel(corpus, num_topics = NUM_TOPICS, id2word=dictionary, passes=15)
-# ldamodel.save('model20.gensim')
-# topics = ldamodel.print_topics(num_words=4)
-# for topic in topics:
-#     print(topic)
-#
-#
-# dictionary = gensim.corpora.Dictionary.load('dictionary.gensim')
-# corpus = pickle.load(open('corpus.pkl', 'rb'))
-# lda = gensim.models.ldamodel.LdaModel.load('model20.gensim')
-# lda_display = pyLDAvis.gensim.prepare(lda, corpus, dictionary, sort_topics=False)
-# pyLDAvis.show(lda_display)
-#
-# print('end: '+ str(time.time()- start))
-
-##########################################
-
-
-NUM_TOPICS = 3
+NUM_TOPICS = 5
 ldamodel = gensim.models.ldamodel.LdaModel(corpus, num_topics = NUM_TOPICS, id2word=dictionary, passes=15)
-ldamodel.save('model3.gensim')
+ldamodel.save('model20.gensim')
 topics = ldamodel.print_topics(num_words=4)
 for topic in topics:
     print(topic)
 
-print('end: '+ str(time.time() - start))
 
 dictionary = gensim.corpora.Dictionary.load('dictionary.gensim')
 corpus = pickle.load(open('corpus.pkl', 'rb'))
-lda = gensim.models.ldamodel.LdaModel.load('model3.gensim')
+lda = gensim.models.ldamodel.LdaModel.load('model20.gensim')
 lda_display = pyLDAvis.gensim.prepare(lda, corpus, dictionary, sort_topics=False)
-pyLDAvis.show(lda_display)
+# pyLDAvis.show(lda_display)
+
+print('end: '+ str(time.time()- start))
+
+##########################################
+
+
+# NUM_TOPICS = 3
+# ldamodel = gensim.models.ldamodel.LdaModel(corpus, num_topics = NUM_TOPICS, id2word=dictionary, passes=15)
+# ldamodel.save('model3.gensim')
+# topics = ldamodel.print_topics(num_words=4)
+# for topic in topics:
+#     print(topic)
+#
+# print('end: '+ str(time.time() - start))
+#
+# dictionary = gensim.corpora.Dictionary.load('dictionary.gensim')
+# corpus = pickle.load(open('corpus.pkl', 'rb'))
+# lda = gensim.models.ldamodel.LdaModel.load('model3.gensim')
+# lda_display = pyLDAvis.gensim.prepare(lda, corpus, dictionary, sort_topics=False)
+# pyLDAvis.show(lda_display)
+
+from gensim.models import CoherenceModel
+# Compute Coherence Score
+coherence_model_lda = CoherenceModel(model=lda, texts=text, dictionary=dictionary, coherence='c_v')
+coherence_lda = coherence_model_lda.get_coherence()
+print('\nCoherence Score: ', coherence_lda)
