@@ -1,5 +1,7 @@
 import pandas as pd
 import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
 
 ################################################ FUNCTIONS ###################################################
 def get_n_tweets(data):
@@ -8,23 +10,25 @@ def get_n_tweets(data):
 def get_n_per_col_value(data, column):
     return data[column].value_counts()
 
-###################################### DESCRIPTIVE STATISTICS ON RAW #########################################
-# raw_data = pd.read_csv("tweets_out.csv")
-# n_raw_tweets = get_n_tweets(raw_data)
-# print("Total number of tweets in original frame: ", n_raw_tweets)
-# n_US_tweets = raw_data[raw_data['country'] == 'United States'].index()
-# n_foreign_tweets = n_raw_tweets - n_US_tweets
-# print("The number of tweets in the US is {} and the number foreign tweets is {}.".format(n_US_tweets, n_foreign_tweets))
-
-
-
-
 ###################################### DESCRIPTIVE STATISTICS ON CLEANED #####################################
-# data = pd.read_csv("cleaned_data_with_states.csv", index_col='index')
-# print(data.columns)
-# print(get_n_per_col_value(data, 'states'))
-# n_tweets = get_n_tweets(data)
-# print("The total number of data points in the data frame is: ", n_tweets)
-# n_tweet_states = get_n_per_col_value(data, 'states').sum()
-# n_unknown = n_tweets - n_tweet_states
-# print("From this {} tweet states are known and {} tweets are from unknown states.".format(n_tweet_states, n_unknown))
+
+# Reads in the data and prints the columns to be analysed.
+data = pd.read_csv("cleaned_twitter_data_50000_sample.csv", index_col=0)
+print(data.columns)
+
+# Gets the distribution of tweets over the states and plots it.
+n_tweets = get_n_tweets(data)
+tweet_state_distribution = pd.DataFrame(get_n_per_col_value(data, 'states')/n_tweets)
+sns.set_palette(sns.color_palette('Blues_r', 13))
+graph = tweet_state_distribution.plot.bar()
+plt.legend().remove()
+_, labels = plt.xticks()
+graph.set_xticklabels(labels, rotation=45, horizontalalignment='right', fontsize='x-small')
+plt.title('Tweet Distribution per State')
+plt.xlabel("State")
+plt.ylabel("Distribution")
+plt.tight_layout(2)
+plt.show()
+
+clinton_data = data[data['candidate'] == 'clinton']
+trump_data = data[data['candidate'] == 'trump']
